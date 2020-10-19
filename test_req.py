@@ -33,8 +33,8 @@ def add_url_page():
                 "Введите url страницы c http:// или https://, где можно найти последнюю статью сайта\n"
                 "(не url статьи)"
                 )
-            #global.url = inp()
-            url = "https://3dnews.ru/news"
+            url = inp()
+            #url = "https://3dnews.ru/news"
             resp = requests.get(url)
             if resp.status_code == 404:
                 print("ERROR 404")
@@ -71,28 +71,25 @@ def add_url_page():
             "сo скриншотами того, что вводили и ссылкой на ресурс.\n"
             "Введите наименоваие тега, где находится строка со временем публикации"
             )
-        #tag = inp()
-        tag = "span"
-        print(
-            "Далее после тега стоит id или class?\n"
-            "1. id\n2. class"
-            )
-        #separate = inp()
-        separate = "2" 
-        print("Введите id элемента, следующего после именования тега")
-        #id_time = inp()
-        id_time = "entry-date"
-        if separate == "1":
-            time_string = soup.findAll(tag, id = id_time)
-        elif separate =="2":
-            time_string = soup.findAll(tag, class_ = id_time)
-        print(time_string[0])
-        print(
-            "Выведенная строка поожа на искомую? (дата может отличаться)\n"
-            "1. Да\n2. Нет\n3. Никак не получается"
-            )
-        #breaking = inp()
-        breaking = "1"
+        try:
+            tag = inp()
+            #tag = "span"
+            print("Теперь введите то, что идет далее до знака равно")
+            separate = inp()
+            #separate = "2" 
+            print("Введите значение после знака равно")
+            id_time = inp()
+            #id_time = "entry-date"
+            time_string = soup.findAll(tag, separate = id_time)
+            print(time_string[0])
+            print(
+                "Выведенная строка поожа на искомую? (дата может отличаться)\n"
+                "1. Да\n2. Нет\n3. Никак не получается"
+                )
+        except IndexError:
+            print("Не получилось найти строки с данными параметрами")
+        breaking = inp()
+        #breaking = "1"
         if breaking == "1":
             print("Сохранено")
             break
@@ -106,16 +103,16 @@ def add_url_page():
         for i, el in enumerate(time_string):
             print(i + 1, el)
         print("Выберите ту дату, которая является искомой (введите позиционное число)")
-        #num = int(inp())
-        num = 26
+        num = int(inp())
+        #num = 26
         num -= 1
         print(time_string[num].text)
         print(
             "Это искомая дата?\n"
             "1. Да\n2. Нет\n3. Никак не получается"
             )
-        #breaking = inp()
-        breaking = "1"
+        breaking = inp()
+        #breaking = "1"
         if breaking == "1":
             time_string = time_string[num]
             last_time = time_string.text
@@ -146,13 +143,14 @@ def add_url_page():
         "\n"
     )
     while True:
-        constructor = ['up', 'up', 'up', 'down']
-        #while True:
-            #buffer = inp()
-            #if buffer == "0":
-            #    break
-            #constructor.append(buffer)
-            #print(constructor)
+        #constructor = ['up', 'up', 'up', 'down']
+        constructor = []
+        while True:
+            buffer = inp()
+            if buffer == "0":
+                break
+            constructor.append(buffer)
+            print(constructor)
         for el in constructor:
             if el == "up":
                 time_string = time_string.find_previous()
@@ -163,22 +161,60 @@ def add_url_page():
         for i, el in enumerate(time_string):
             print(i + 1, el)
         print(
-            "Выберите ту строку, в которой находится искомая ссылка (она может быть обрезанной)\n"
+            "Выберите ту строку, в которой находится ссылка на последнюю статью \n"
+            "Она должна находиться после href= (она может быть обрезанной)\n"
             "Если вы не нашли здесь искомую ссылку, введите 0 и перепровеьте комбинацию шагов"
             )
-        #breaking = int(inp())
-        breaking = 2
+        breaking = int(inp())
+        #breaking = 2
         if breaking == 0:
             continue
         break
     breaking -= 1
     time_string = time_string[breaking]
-    print(time_string['href'])
-    
+    while True:
+        print("Полученная ссылка")
+        print(time_string['href'])
+        print(
+            "Необходимо ли к ней добавить доменое имя?\n"
+            "1. Да\n"
+            "2. Нет\n"
+            )
+        breaking = inp()
+        if breaking == "1":
+            print("Введите недостающую часть")
+            complete_url = inp()
+            print("Перейдите по получившейся ссылке для проверки")
+            print(complete_url+time_string["href"])
+            print(
+                "Всё прошло удачно?\n"
+                "1. Да\n"
+                "2. Нет\n"
+            )
+            breaking = inp()
+            if breaking == "1":
+                # Нужно сохранить все переменные в бд, а именно
+                # url tag separate id_time last_time constructor time_string['href'] complete_url
+                # И ещё добить чутка
+                break
+            elif breaking == "2":
+                print("Повторим")
+                continue
+            else:
+                print("Ошибка ввода. Возврат назад")
+                continue
+        elif breaking == "2":
+            complete_url = ""
+            # Нужно сохранить все переменные в бд, а именно
+            # url tag separate id_time last_time constructor time_string['href'] complete_url 
+            break
+                
+        else:
+            print("Ошибка ввода. Возврат назад")
+            continue
+    print(url, tag, separate, last_time, constructor, time_string['href'], complete_url  )
 
 
 
     
 add_url_page()
-print(soup.prettify())
-#code = 'document.getElementsByClassName("entry-date")[25].innerText'
