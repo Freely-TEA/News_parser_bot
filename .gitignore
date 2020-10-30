@@ -1,2 +1,7 @@
 /env
 .vscode
+app.log
+parse_conf.ini
+sections.ini
+test.py
+__pycache__/
