@@ -1,0 +1,3 @@
+
+ar = ""
+print(ar.split())
