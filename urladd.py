@@ -39,11 +39,14 @@ try:
 
     # time search
     while True:
-        print("tag")
+        print("TAG")
         tag = inp()
-        print("classes (if 'class=' input 0)")
+        print("CLASSES")
         classes = inp()
-        print("id")
+        print(
+            "ID\n"
+            "if id a dinamic value press enter"
+            )
         id = inp()
         #tag = "p"
         #classes = "0"
@@ -53,9 +56,9 @@ try:
         if (tag == None) or (classes == None):
             print("Empty input. Return to checkpoint")
             continue
-
+        
         # serch all time string
-        if classes == "0":
+        if classes == "class":
             time_string = soup.findAll(tag, class_ = id)
         else:
             time_string = soup.findAll(tag, classes = id)
@@ -86,26 +89,20 @@ try:
     while True:
         print("<tag classes = id> text in string </tag>")
         print(link_search)
-        to_save = ["tag", "classes", "id", "text in string"]
+        to_save = ["id", "text in string"]
         print("What we need save to can parse. What be editetd and can tracked")
         for num, el in enumerate(to_save):
             print(f"{num}. {el}")
         print("Select")
         select = inp()
         if select == "0":
-            saves = tag
+            saves_type = select
+            saves = link_search.get(classes) #save id in string
             print("\n\nCheckpoint\n\n")
             break
         elif select == "1":
-            saves = classes
-            print("\n\nCheckpoint\n\n")
-            break
-        elif select == "2":
-            saves = id
-            print("\n\nCheckpoint\n\n")
-            break
-        elif select == "3":
-            saves = link_search.text
+            saves_type = select
+            saves = link_search.text #save text from line
             print("\n\nCheckpoint\n\n")
             break
         else:
@@ -159,6 +156,7 @@ try:
     config.set(conf_sec_name, "CLASSES", classes)
     config.set(conf_sec_name, "ID", id)
     config.set(conf_sec_name, "TIME_NUM", str(time_num))
+    config.set(conf_sec_name, "SAVES_TYPE", saves_type)
     config.set(conf_sec_name, "SAVES", saves)
     config.set(conf_sec_name, "SEARCH_STEPS", steps_in_str)
     config.set(conf_sec_name, "FULL_URL", full_url)

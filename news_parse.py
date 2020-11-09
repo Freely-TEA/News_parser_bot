@@ -11,11 +11,17 @@ try:
     # add loger
     logging.basicConfig(filename='app.log', filemode='a', format='%(name)s - %(levelname)s - %(message)s')
 
-    # its for simple use
-    def inp():
-        return input(">> ")
-
     while True:
+        # get sleep time
+        main_conf = configparser.ConfigParser()
+        main_conf.read("main_settings.ini")
+        sleep_time = main_conf.get("settings", "sleep_time")
+        try:
+            sleep_time = int(sleep_time) / 60
+        except:
+            # defalt sleep_time
+            sleep_time = 900
+        
         # get parse setting from conf
         config = configparser.ConfigParser()
         config.read("parse_conf.ini")
@@ -32,6 +38,7 @@ try:
             classes = config.get(el, "classes")
             id = config.get(el, "id")
             time_num = config.get(el, "time_num")
+            saves_type = config.get(el, "saves_type")
             saves = config.get(el, "saves")
             search_steps = config.get(el, "search_steps")
             full_url = config.get(el, "full_url")
@@ -58,15 +65,18 @@ try:
                 if (tag == None) or (classes == None):
                     logging.error(f"NEWS_PARSE:-:EMPTY SEARCH INFO: tag or clases == None in {el}] section")
                     continue
-            
-                if classes == "0":
+                
+                # find all time string
+                if classes == "class":
                     time_string = soup.findAll(tag, class_ = id)
                 else:
                     time_string = soup.findAll(tag, classes = id)
 
+                # maybe len be 0
                 if len(time_string) == 0:
                     logging.error(f"NEWS_PARSE:-:EMPTY SEARCH OUTPUT: not find any string with time in [{el}] section")
                     continue
+
             except:
                 logging.exception("IN TAG, CLASSES, ID, etc")
 
@@ -78,10 +88,25 @@ try:
                 continue
             
             try:
-                if saves in time_string[time_num].text:
-                    logging.debug(f"Not a news in [{el}]")
-                    continue                
+                # check news
+                if saves_type == "0":
+                    if saves in time_string.get(classes):
+                        have_update = False
+                        logging.error(f"not news in {el}")
+                    else:
+                        have_update = True
+                elif saves_type == "1":
+                    if saves in time_string[time_num].text:
+                        have_update = False
+                        logging.error(f"not news in {el}")
+                    else:
+                        have_update = True
                 else:
+                    logging.error(f"NEWS_PARSE:-:SAVES_TYPE_ERROR: saves_type not equal (not 0 or 1)")
+                    continue
+
+                # if site have a new news
+                if have_update:
                     link_search = time_string[time_num]
                     search_steps = search_steps.split()
                     saves = link_search.text
@@ -91,8 +116,12 @@ try:
                         elif step == "down":
                             link_search = link_search.findNext()
                         elif (step != 'up') or (step != 'down'):
-                            logging.error(f"NEWS_PARSE:-: STEPS ERROR: error in steps in [{el}] sections")
+                            logging.error(f"NEWS_PARSE:-:STEPS ERROR: error in steps in [{el}] sections")
                     print(full_url + link_search['href'])
+                    have_update = False
+                else:
+                    continue
+
             except IndexError:
                 logging.error(f"NEWS_PARSE:-:INDEX ERROR: doesn exsist this string in [{el}]sections")
             except:
@@ -104,7 +133,7 @@ try:
                 config.write(config_file)
 
 
-        sleep(600)
+        sleep(sleep_time)
 
 except:
     logging.exception("OH NO")
