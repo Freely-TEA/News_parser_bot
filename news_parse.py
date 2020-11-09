@@ -5,6 +5,7 @@ from time import sleep
 from bs4 import BeautifulSoup
 import requests
 
+import discord_bot
 import feedback
 
 try:
@@ -92,13 +93,11 @@ try:
                 if saves_type == "0":
                     if saves in time_string.get(classes):
                         have_update = False
-                        logging.error(f"not news in {el}")
                     else:
                         have_update = True
                 elif saves_type == "1":
                     if saves in time_string[time_num].text:
                         have_update = False
-                        logging.error(f"not news in {el}")
                     else:
                         have_update = True
                 else:
@@ -117,7 +116,11 @@ try:
                             link_search = link_search.findNext()
                         elif (step != 'up') or (step != 'down'):
                             logging.error(f"NEWS_PARSE:-:STEPS ERROR: error in steps in [{el}] sections")
-                    print(full_url + link_search['href'])
+                    
+                    # sending news        
+                    news_url = full_url + link_search['href']
+                    discord_bot.send_news(el, news_url)
+                    # after send
                     have_update = False
                 else:
                     continue
