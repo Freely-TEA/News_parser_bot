@@ -39,6 +39,7 @@ try:
 
     # time search
     while True:
+        print('<tag classes="id">text</tag>')
         print("TAG")
         tag = inp()
         print("CLASSES")
