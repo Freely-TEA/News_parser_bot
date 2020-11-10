@@ -4,7 +4,7 @@ import configparser
 from bs4 import BeautifulSoup
 import requests
 
-import feedback
+import discord_bot
 
 try:
     # add loger
@@ -169,5 +169,4 @@ try:
         config.write(conf_file)
 
 except:
-    logging.exception("Hmmmm")
-    feedback.feedback()
+    logging.exception("Hmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")

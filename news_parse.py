@@ -6,19 +6,15 @@ from bs4 import BeautifulSoup
 import requests
 
 import discord_bot
-import feedback
 
 try:
     # add loger
     logging.basicConfig(filename='app.log', filemode='a', format='%(name)s - %(levelname)s - %(message)s')
 
     while True:
-        # get sleep time
-        main_conf = configparser.ConfigParser()
-        main_conf.read("main_settings.ini")
-        sleep_time = main_conf.get("settings", "sleep_time")
+        # get sleep time from discord_bot.py
         try:
-            sleep_time = int(sleep_time) / 60
+            sleep_time = int(discord_bot.PARSE_TIME) * 60
         except:
             # defalt sleep_time
             sleep_time = 900
@@ -30,10 +26,11 @@ try:
         with open("sections.ini", "r") as sections_file:
             sections = sections_file.read()
         
+        # get all sections
         sections = sections.split()
 
         for el in sections:
-            # read conf file
+            # read conf file one of sections
             url = config.get(el, "url")
             tag = config.get(el, "tag")
             classes = config.get(el, "classes")
@@ -96,7 +93,7 @@ try:
                     else:
                         have_update = True
                 elif saves_type == "1":
-                    if saves in time_string[time_num].text:
+                    if  saves in time_string[time_num].text:
                         have_update = False
                     else:
                         have_update = True
@@ -127,8 +124,7 @@ try:
 
             except IndexError:
                 logging.error(f"NEWS_PARSE:-:INDEX ERROR: doesn exsist this string in [{el}]sections")
-            except:
-                logging.exception("in steps sections")  
+              
 
             # update saves in config
             config.set(el, "saves", saves)
@@ -137,6 +133,7 @@ try:
 
 
         sleep(sleep_time)
+
 
 except:
     logging.exception("OH NO")
