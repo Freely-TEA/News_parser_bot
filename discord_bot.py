@@ -1,7 +1,7 @@
 import discord
 # https://discordapp.com/oauth2/authorize?&client_id=775611956220264449&scope=bot&permissions=2048
-TOKEN = 'Nzc1NjExOTU2MjIwMjY0NDQ5.X6o27A.1IpsSkV4-u66VvYv3ADksTQKCW8'        # token of you bot
-CHANEL_ID = 775616143812853781      # chanel (NOT SERVER) id (can see in browser) ITS WAS BE INT
+TOKEN = ''        # token of you bot
+CHANEL_ID =       # chanel (NOT SERVER) id (can see in browser) ITS WAS BE INT
 PARSE_TIME = 10            # minuts between checks
 
 
